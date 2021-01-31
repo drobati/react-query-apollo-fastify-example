@@ -1,66 +1,25 @@
-import { useQueryClient, QueryClient, QueryClientProvider } from "react-query";
+import { useState } from "react";
 
-import { useFetchDesserts, useAddDessert } from "./api/desserts";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+import Banner from "./components/Banner";
+import Menu from "./components/Menu";
+import Desserts from "./components/Desserts";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const [selected, setSelected] = useState({});
+  const handleCheckbox = (id) => {
+    setSelected({ ...selected, [id]: !selected[id] });
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Desserts />
+      <Banner />
+      <Menu checked={selected} />
+      <Desserts checked={{ selected, handleCheckbox }} />
     </QueryClientProvider>
-  );
-}
-
-function Desserts() {
-  const queryClient = useQueryClient();
-  const { status, data, error, isFetching } = useFetchDesserts();
-
-  return (
-    <div>
-      {status === "loading" ? (
-        "Loading..."
-      ) : status === "error" ? (
-        <span>Error: {error.message}</span>
-      ) : (
-        <>
-          <div class="pa4">
-            <div class="overflow-auto">
-              <table class="f6 w-100 mw8 center" cellspacing="0">
-                <thead>
-                  <tr>
-                    <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Name</th>
-                    <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">
-                      Calories
-                    </th>
-                    <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">
-                      Carbs
-                    </th>
-                    <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Fats</th>
-                    <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">
-                      Proteins
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="lh-copy">
-                  {data.Desserts.map((dessert) => (
-                    <tr key={dessert.Id}>
-                      <td class="pv3 pr3 bb b--black-20">{dessert.Name}</td>
-                      <td class="pv3 pr3 bb b--black-20">{dessert.Calories}</td>
-                      <td class="pv3 pr3 bb b--black-20">{dessert.Carbs}</td>
-                      <td class="pv3 pr3 bb b--black-20">{dessert.Fat}</td>
-                      <td class="pv3 pr3 bb b--black-20">{dessert.Protein}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div>{isFetching ? "Background Updating..." : " "}</div>
-        </>
-      )}
-    </div>
   );
 }
 
