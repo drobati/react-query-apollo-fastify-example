@@ -9,6 +9,12 @@ const server = new ApolloServer({
 const app = require("fastify")();
 
 (async function () {
-  app.register(server.createHandler());
-  await app.listen(3000);
+  app.register(
+    server.createHandler({
+      cors: {
+        origin: "*",
+      },
+    })
+  );
+  await app.listen(4000);
 })();
